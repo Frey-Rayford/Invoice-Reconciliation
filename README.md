@@ -4,9 +4,19 @@
 
 A local app for checking an invoice against its purchase order. Review the extracted fields, open the supporting document, and see which quantities, prices or items differ before saving the review to SQL Server.
 
-I built this around a small purchasing workflow: a reviewer needs to know **what changed, where it appears on the document, and what was checked last time**. The current version handles one PO–invoice pair at a time and includes synthetic documents you can try without an API key.
+The current version handles one PO–invoice pair at a time and includes synthetic documents you can try without an API key.
 
 ![Reviewing the sample invoice against its purchase order](docs/screenshots/reconciliation.png)
+
+## Why this project
+
+A purchase order (PO) records what a business ordered, including quantities and agreed prices. The supplier's invoice lists what they are asking the business to pay. Before payment, a purchasing or accounts payable reviewer needs to check that the two agree.
+
+Comparing PDFs side by side means finding the same item on both documents, checking its quantity and price, and keeping a record of the findings. A matching grand total alone is not enough: one item can cost more while another costs less. A difference also does not automatically mean an error; an agreed change may need confirmation.
+
+I chose this workflow to connect document extraction with a concrete review task. The app brings **the differing fields, their source pages and the saved review** together. It is intended to help the reviewer identify what needs clarification with the supplier or purchasing team. It does not check whether goods were received or approve payment.
+
+The workflow is straightforward: upload a PO and invoice, verify the extracted fields, compare the line items, then save the review. AI is optional for reading documents; Python applies the comparison rules and SQL Server keeps the review history. This is a personal prototype, with no measured time savings or production usage claimed.
 
 ## What works
 
@@ -104,4 +114,4 @@ The next step is to test extraction on a varied, labeled set of invoices and rec
 
 Uploaded documents and local metadata stay in `data/`; secrets stay in `.env`. Both are excluded from Git. Back up the database **and** `data/` together to retain source previews. The app stores normalized PDFs and the upload's SHA-256, but does not retain the exact original file bytes.
 
-[Detailed setup and comparison rules (Vietnamese)](docs/setup.vi.md)
+[Setup guide (Vietnamese)](docs/setup.vi.md)

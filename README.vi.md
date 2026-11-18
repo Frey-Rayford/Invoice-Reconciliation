@@ -4,9 +4,19 @@ Tiếng Việt · [English](README.md)
 
 Ứng dụng đối chiếu hóa đơn với đơn đặt hàng (PO). Người dùng kiểm tra dữ liệu đã trích xuất, mở lại chứng từ để xác minh, xem chênh lệch từng dòng rồi lưu kết quả vào SQL Server.
 
-Mình làm project này từ một bài toán nhỏ trong mua hàng: người kiểm tra cần biết **sai khác ở đâu, nằm trên trang nào và lần trước đã kiểm tra những gì**. Bản hiện tại xử lý một cặp PO–hóa đơn, kèm chứng từ giả lập để thử mà không cần API key.
+Bản hiện tại xử lý một cặp PO–hóa đơn, kèm chứng từ giả lập để thử mà không cần API key.
 
 ![Kết quả đối chiếu hóa đơn và PO mẫu](docs/screenshots/reconciliation.png)
+
+## Vì sao có dự án này?
+
+Đơn đặt hàng (PO) ghi doanh nghiệp đặt mua gì, số lượng bao nhiêu và đơn giá đã thống nhất. Hóa đơn của nhà cung cấp ghi số tiền họ yêu cầu thanh toán. Trước khi trả tiền, nhân viên mua hàng hoặc kế toán công nợ cần kiểm tra hai bên có khớp nhau không.
+
+Nếu kiểm tra bằng cách mở hai file PDF cạnh nhau, người làm phải tìm từng mặt hàng, so số lượng, đơn giá rồi ghi lại kết quả. Chỉ nhìn tổng tiền chưa đủ: một mặt hàng tăng tiền có thể bù cho mặt hàng khác giảm tiền. Có chênh lệch cũng chưa chắc là sai; đó có thể là thay đổi đã thỏa thuận nhưng cần xác nhận lại.
+
+Mình chọn bài toán này để nối việc đọc dữ liệu từ chứng từ với một công việc kiểm tra cụ thể. Ứng dụng đặt **dữ liệu chênh lệch, trang chứng từ gốc và kết quả đã lưu** vào cùng một luồng. Người kiểm tra có thể xác định cần hỏi lại nhà cung cấp hoặc bộ phận mua hàng ở điểm nào. Ứng dụng chưa kiểm tra hàng đã nhận và không tự duyệt thanh toán.
+
+Cách dùng: tải PO và hóa đơn lên, kiểm tra dữ liệu đã đọc, đối chiếu từng dòng rồi lưu kết quả. AI là tùy chọn để đọc chứng từ; Python áp dụng quy tắc so sánh, SQL Server giữ lịch sử kiểm tra. Đây là project cá nhân, chưa có số liệu đo thời gian tiết kiệm hay triển khai thực tế tại doanh nghiệp.
 
 ## Đã làm được gì
 
@@ -104,4 +114,4 @@ Việc tiếp theo là thử trích xuất trên bộ hóa đơn đa dạng đã
 
 File tải lên và metadata local nằm trong `data/`, cấu hình riêng trong `.env`; cả hai được loại khỏi Git. Cần sao lưu cả database **và** `data/` để giữ ảnh chứng từ trong lịch sử. Ứng dụng lưu PDF chuẩn hóa và SHA-256 của file tải lên, chưa lưu nguyên byte file gốc.
 
-[Hướng dẫn chi tiết và quy tắc đối chiếu](docs/setup.vi.md)
+[Hướng dẫn cài đặt](docs/setup.vi.md)
