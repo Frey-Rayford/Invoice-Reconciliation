@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#edf2ef" />
+    <title>Đối chiếu · Invoice Reconciliation</title>
+    <link rel="stylesheet" href="/static/app.css" />
+  </head>
+  <body>
+    <svg
+      class="svg-library"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <symbol id="i-doc" viewBox="0 0 24 24">
+        <path
+          d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8Z M14 3v5h5 M8 12h8 M8 16h6"
+        />
+      </symbol>
+      <symbol id="i-upload" viewBox="0 0 24 24">
+        <path
+          d="M12 16V3m-5 5 5-5 5 5M4 15v5a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-5"
+        />
+      </symbol>
+      <symbol id="i-check" viewBox="0 0 24 24">
+        <path d="m5 12 4 4L19 6" />
+      </symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24">
+        <path d="M4 12h16m-6-6 6 6-6 6" />
+      </symbol>
+      <symbol id="i-external" viewBox="0 0 24 24">
+        <path
+          d="M14 4h6v6m0-6L10 14M10 5H5a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1v-5"
+        />
+      </symbol>
+      <symbol id="i-history" viewBox="0 0 24 24">
+        <path d="M3 11a9 9 0 1 1 2 7M3 4v7h7m2-5v6l4 2" />
+      </symbol>
+      <symbol id="i-help" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M9.5 9a2.5 2.5 0 1 1 4 2c-1 .5-1.5 1-1.5 2m0 3h.01" />
+      </symbol>
+      <symbol id="i-refresh" viewBox="0 0 24 24">
+        <path
+          d="M20 10a8 8 0 0 0-14-4L3 9m0-6v6h6m-5 5a8 8 0 0 0 14 4l3-3m0 6v-6h-6"
+        />
+      </symbol>
+      <symbol id="i-close" viewBox="0 0 24 24">
+        <path d="m6 6 12 12M6 18 18 6" />
+      </symbol>
+      <symbol id="i-compare" viewBox="0 0 24 24">
+        <path d="M4 7h16m-4-4 4 4-4 4M20 17H4m4-4-4 4 4 4" />
+      </symbol>
+    </svg>
+    <a class="skip" href="#workspace">Đến nội dung chính</a>
+    <aside class="sidebar">
+      <a class="brand" href="#workspace"
+        ><svg viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M4 4h10v24H4zM18 4h10v24H18zM8 11h16M8 20h16" /></svg
+        ><span>Đối chiếu<small>Invoice Reconciliation</small></span></a
+      >
+      <div class="nav-label">Không gian làm việc</div>
+      <nav aria-label="Điều hướng chính">
+        <a class="nav-item active" href="#workspace" aria-current="page"
+          ><svg class="icon"><use href="#i-compare" /></svg>Đối chiếu chứng
+          từ</a
+        ><a
+          class="nav-item"
+          href="#history-section"
+          aria-label="Lịch sử đối chiếu"
+          ><svg class="icon"><use href="#i-history" /></svg
+          ><span class="nav-text">Lịch sử đối chiếu</span></a
+        ><button class="nav-item" data-help aria-label="Cách sử dụng">
+          <svg class="icon"><use href="#i-help" /></svg
+          ><span class="nav-text">Cách sử dụng</span>
+        </button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="legend">
+          <p>Đọc kết quả</p>
+          <span><i class="legend-dot match"></i>Khớp dữ liệu</span
+          ><span><i class="legend-dot difference"></i>Có chênh lệch</span
+          ><span><i class="legend-dot review"></i>Cần kiểm tra thêm</span>
+        </div>
+        <div class="connections">
+          <span id="sql-status">Đang kiểm tra kết nối…</span
+          ><span id="ai-status">AI chưa cấu hình</span>
+        </div>
+        <span class="local-label">Bản chạy trên máy · v0.1</span>
+      </div>
+    </aside>
+    <header class="topbar">
+      <span
+        >Chứng từ <span class="breadcrumb-divider">/</span>
+        <strong>Đối chiếu</strong></span
+      ><button class="text-button" data-help>
+        <svg class="icon"><use href="#i-help" /></svg>Hướng dẫn
+      </button>
+    </header>
+    <main id="workspace" tabindex="-1">
+      <div class="title-row">
+        <div>
+          <h1>Đối chiếu chứng từ</h1>
+          <p class="muted">
+            Từ đơn đặt hàng đến hóa đơn. Kiểm tra rõ từng khoản chênh lệch.
+          </p>
+        </div>
+        <button id="demo" class="secondary">
+          <svg class="icon"><use href="#i-doc" /></svg>Thử với bộ mẫu<svg
+            class="icon"
+          >
+            <use href="#i-arrow" />
+          </svg>
+        </button>
+      </div>
+      <ol class="workflow" aria-label="Tiến trình đối chiếu">
+        <li id="step-upload" class="current" aria-current="step">
+          <span class="step-number">1</span
+          ><span
+            >Thêm chứng từ<small id="upload-progress"
+              >Chọn một PO và một hóa đơn</small
+            ></span
+          >
+        </li>
+        <li id="step-review">
+          <span class="step-number">2</span
+          ><span>Kiểm tra dữ liệu<small>Đối chiếu với bản gốc</small></span>
+        </li>
+        <li id="step-result">
+          <span class="step-number">3</span
+          ><span>Xem kết quả<small>Chênh lệch và lịch sử</small></span>
+        </li>
+      </ol>
+      <div
+        id="notice"
+        class="notice"
+        role="status"
+        aria-live="polite"
+        hidden
+      ></div>
+      <details class="upload-section" id="upload-details" open>
+        <summary>
+          <span class="summary-title"
+            ><svg class="icon"><use href="#i-doc" /></svg>Chứng từ đầu vào
+            <span id="file-count" class="count">0/2</span></span
+          ><span class="summary-action"
+            ><span class="summary-label">Thêm / thay tài liệu</span>
+            <span class="chevron">⌄</span></span
+          >
+        </summary>
+        <div class="upload-content">
+          <div class="method-row">
+            <div>
+              <label for="method">Cách đọc tài liệu</label>
+              <p id="method-note" class="hint">
+                Bộ mẫu là dữ liệu giả lập, không cần API.
+              </p>
+            </div>
+            <select id="method">
+              <option value="template">Bố cục mẫu · trên máy</option>
+              <option value="ai" id="ai-option" disabled>
+                AI · chưa cấu hình API
+              </option>
+            </select>
+          </div>
+          <div class="upload-pair">
+            <div class="dropzone" data-drop="po">
+              <svg class="document-icon"><use href="#i-doc" /></svg>
+              <div class="drop-copy">
+                <h2>Đơn đặt hàng <span>PO</span></h2>
+                <p id="po-file-name">Kéo thả tài liệu vào đây</p>
+                <small>PDF, PNG, JPG · tối đa 10 MB</small>
+              </div>
+              <label class="file-button" for="po-file"
+                ><svg class="icon"><use href="#i-upload" /></svg>Chọn
+                file</label
+              ><input
+                class="file-input"
+                id="po-file"
+                type="file"
+                accept=".pdf,.png,.jpg,.jpeg"
+                aria-label="Chọn đơn đặt hàng"
+              />
+            </div>
+            <div class="dropzone" data-drop="invoice">
+              <svg class="document-icon"><use href="#i-doc" /></svg>
+              <div class="drop-copy">
+                <h2>Hóa đơn <span>Invoice</span></h2>
+                <p id="invoice-file-name">Kéo thả tài liệu vào đây</p>
+                <small>Cùng đơn đặt hàng và tiền tệ</small>
+              </div>
+              <label class="file-button" for="invoice-file"
+                ><svg class="icon"><use href="#i-upload" /></svg>Chọn
+                file</label
+              ><input
+                class="file-input"
+                id="invoice-file"
+                type="file"
+                accept=".pdf,.png,.jpg,.jpeg"
+                aria-label="Chọn hóa đơn"
+              />
+            </div>
+          </div>
+          <p class="upload-footnote">
+            Mỗi tài liệu tối đa 10 trang. Bạn có thể kiểm tra và sửa dữ liệu
+            trước khi đối chiếu.
+          </p>
+        </div>
+      </details>
+      <section class="first-run" id="first-run" aria-label="Nội dung đối chiếu">
+        <h2>Ba điểm cần kiểm tra</h2>
+        <div class="check-guide">
+          <div>
+            <strong>Số lượng & đơn vị</strong>
+            <p>Cùng mặt hàng, đúng số lượng đã đặt và đơn vị tính.</p>
+          </div>
+          <div>
+            <strong>Đơn giá & thành tiền</strong>
+            <p>Nhìn rõ giá thay đổi và phép tính chưa khớp trên hóa đơn.</p>
+          </div>
+          <div>
+            <strong>Dòng thừa hoặc thiếu</strong>
+            <p>Tìm mặt hàng chỉ xuất hiện trên một trong hai chứng từ.</p>
+          </div>
+        </div>
+        <a class="sample-link" href="/api/samples/purchase-order.pdf"
+          >Tải PO mẫu ↓</a
+        ><a class="sample-link" href="/api/samples/invoice.pdf"
+          >Tải hóa đơn mẫu ↓</a
+        >
+      </section>
+      <section id="document-section" hidden aria-label="Kiểm tra dữ liệu">
+        <div class="section-heading">
+          <div>
+            <h2>Dữ liệu chứng từ</h2>
+            <p class="hint">
+              Bấm vào ô để sửa. Ô có dấu màu là dữ liệu đã thay đổi so với lần
+              đọc đầu.
+            </p>
+          </div>
+          <span id="edit-state" class="neutral-label">Chưa chỉnh sửa</span>
+        </div>
+        <div class="documents">
+          <article class="document-panel" id="po-panel"></article>
+          <article class="document-panel" id="invoice-panel"></article>
+        </div>
+      </section>
+      <div class="review-bar" id="review-bar" hidden>
+        <div>
+          <label class="check"
+            ><input id="reviewed" type="checkbox" />Tôi đã kiểm tra dữ liệu với
+            chứng từ gốc.</label
+          >
+          <p id="review-hint" class="hint">
+            Xác nhận kiểm tra để bắt đầu đối chiếu.
+          </p>
+        </div>
+        <button class="primary" id="compare" disabled>
+          <svg class="icon"><use href="#i-compare" /></svg
+          ><span>Đối chiếu & lưu</span
+          ><svg class="icon"><use href="#i-arrow" /></svg>
+        </button>
+      </div>
+      <section
+        id="results"
+        class="results"
+        aria-label="Kết quả đối chiếu"
+        tabindex="-1"
+        hidden
+      ></section>
+      <section class="history-section" id="history-section">
+        <div class="section-heading">
+          <div>
+            <h2>
+              Lịch sử đối chiếu <span id="history-count" class="count"></span>
+            </h2>
+            <p class="hint">Mở lại dữ liệu và kết quả ở thời điểm đã lưu.</p>
+          </div>
+          <button id="refresh" class="secondary">
+            <svg class="icon"><use href="#i-refresh" /></svg>Tải lại
+          </button>
+        </div>
+        <div id="history" class="muted">Đang đọc lịch sử…</div>
+      </section>
+      <footer>
+        <span>Một PO · Một hóa đơn · Trước thuế và chiết khấu</span
+        ><span>Kết quả hỗ trợ kiểm tra, chưa phải quyết định thanh toán.</span>
+      </footer>
+    </main>
+    <dialog id="evidence-dialog" aria-labelledby="evidence-title">
+      <div class="dialog-toolbar">
+        <div class="dialog-heading">
+          <div>
+            <h2 id="evidence-title">Chứng từ gốc</h2>
+            <p id="evidence-note" class="hint"></p>
+          </div>
+          <button
+            id="close-evidence"
+            class="icon-button"
+            aria-label="Đóng chứng từ"
+          >
+            <svg class="icon"><use href="#i-close" /></svg>
+          </button>
+        </div>
+        <div class="page-nav">
+          <button id="prev-page" class="secondary">← Trang trước</button
+          ><span id="page-label"></span
+          ><button id="next-page" class="secondary">Trang sau →</button>
+        </div>
+      </div>
+      <div class="paper">
+        <img id="source-image" alt="Trang chứng từ gốc" />
+        <div id="highlights"></div>
+      </div>
+      <p id="source-quote" class="source-quote"></p>
+    </dialog>
+    <dialog id="help-dialog" aria-labelledby="help-title">
+      <div class="dialog-heading">
+        <h2 id="help-title">Bắt đầu với một cặp chứng từ</h2>
+        <button id="close-help" class="icon-button" aria-label="Đóng hướng dẫn">
+          <svg class="icon"><use href="#i-close" /></svg>
+        </button>
+      </div>
+      <ol class="help-steps">
+        <li>
+          <strong>Thêm PO và hóa đơn</strong>
+          <p>
+            Dùng bộ mẫu để thử ngay. Với tài liệu khác, cấu hình API rồi chọn
+            chế độ AI.
+          </p>
+        </li>
+        <li>
+          <strong>Kiểm tra những gì đã đọc</strong>
+          <p>
+            Sửa ô chưa đúng, bấm biểu tượng trang để xem bản gốc. Dữ liệu AI đọc
+            ra vẫn cần được kiểm tra.
+          </p>
+        </li>
+        <li>
+          <strong>Đối chiếu và xem nguồn</strong>
+          <p>
+            Xác nhận kiểm tra rồi lưu. Chênh lệch được tính bằng tổng hóa đơn
+            trừ tổng PO, trước thuế và chiết khấu.
+          </p>
+        </li>
+      </ol>
+      <div class="help-note">
+        <strong>Khi nào chưa thể kết luận?</strong>
+        <p>
+          Thiếu dữ liệu, trùng SKU hoặc khác đơn vị/tiền tệ sẽ được đánh dấu cần
+          kiểm tra. Ứng dụng không tự đoán cách ghép những dòng này.
+        </p>
+      </div>
+      <button id="help-done" class="primary">Đã hiểu</button>
+    </dialog>
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>
