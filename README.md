@@ -15,7 +15,7 @@ I built this around a small purchasing workflow: a reviewer needs to know **what
 - Open the source page from a line item. For text PDFs, matching evidence quotes are highlighted so the reviewer can check them.
 - Recalculate line amounts with Python `Decimal`, check the amounts printed on the document, and keep missing values distinct from zero.
 - Save the original extraction and each review snapshot in SQL Server. Reopening a review restores its inputs and result; a failed save rolls back the transaction.
-- Use result filters, review history and a responsive interface on desktop or mobile.
+- Use result filters and a separate history view; switching views preserves unsaved edits. The responsive interface includes keyboard focus, reduced-motion support and locally hosted fonts.
 
 **AI status:** an OpenAI Responses API adapter is implemented, with structured output validation and mocked tests for valid and invalid responses. It has **not yet been evaluated with live API calls or a labeled invoice dataset**. The bundled demo uses a template parser, not AI; that parser only supports the supplied sample format.
 
@@ -34,7 +34,7 @@ These are synthetic inputs for checking the workflow, not measured business savi
 
 ![Source page with the matching evidence highlighted](docs/screenshots/evidence.png)
 
-A highlight confirms that the quote appears in the PDF text. The reviewer still needs to check whether the extracted values are correct. Scanned pages can be viewed but do not have text-based highlights.
+A highlight confirms that the quote appears in the PDF text. The current field values sit beside the page for checking, including any edits. Scanned pages can be viewed but do not have text-based highlights.
 
 </details>
 

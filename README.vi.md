@@ -15,7 +15,7 @@ Mình làm project này từ một bài toán nhỏ trong mua hàng: người ki
 - Mở trang chứng từ ngay từ từng dòng. Với PDF có lớp text, câu trích khớp được tô sáng để người dùng kiểm tra.
 - Tính lại thành tiền bằng `Decimal`, kiểm tra số tiền in trên chứng từ và phân biệt ô trống với số 0.
 - Lưu bản trích xuất gốc và từng lần kiểm tra trong SQL Server. Mở lịch sử sẽ khôi phục đầu vào và kết quả của lần đó; lưu lỗi thì rollback toàn bộ transaction.
-- Lọc kết quả, xem lịch sử và thao tác trên cả desktop lẫn điện thoại.
+- Lọc kết quả và xem lịch sử ở màn hình riêng; chuyển màn hình vẫn giữ các ô đang sửa. Giao diện hỗ trợ desktop, điện thoại, bàn phím, chế độ giảm chuyển động và font lưu ngay trong project.
 
 **Phần AI hiện tại:** đã viết adapter gọi OpenAI Responses API, kiểm tra đầu ra theo cấu trúc và test giả lập cho phản hồi hợp lệ/không hợp lệ. **Chưa đánh giá bằng API thật hoặc bộ hóa đơn đã gán nhãn.** Bộ mẫu chạy bằng parser theo mẫu cố định, không dùng AI; parser này chỉ hỗ trợ định dạng chứng từ đi kèm.
 
@@ -34,7 +34,7 @@ PO có tổng **3.250.000 VND**, hóa đơn có tổng **3.720.000 VND**. Chênh
 
 ![Trang chứng từ với câu trích được tô sáng](docs/screenshots/evidence.png)
 
-Vùng tô sáng xác nhận câu trích có trong lớp text của PDF. Người dùng vẫn cần kiểm tra các giá trị đã đọc có đúng không. PDF scan xem được ảnh trang nhưng không có vùng tô sáng theo text.
+Vùng tô sáng xác nhận câu trích có trong lớp text của PDF. Các giá trị đang kiểm tra được đặt cạnh trang, gồm cả những ô đã sửa. PDF scan xem được ảnh trang nhưng không có vùng tô sáng theo text.
 
 </details>
 

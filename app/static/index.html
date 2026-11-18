@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#edf2ef" />
+    <meta name="theme-color" content="#f2f4f7" />
     <title>Đối chiếu · Invoice Reconciliation</title>
+    <link rel="stylesheet" href="/static/fonts/geist.css" />
     <link rel="stylesheet" href="/static/app.css" />
   </head>
   <body>
@@ -54,60 +55,30 @@
       </symbol>
     </svg>
     <a class="skip" href="#workspace">Đến nội dung chính</a>
-    <aside class="sidebar">
-      <a class="brand" href="#workspace"
-        ><svg viewBox="0 0 32 32" aria-hidden="true">
-          <path d="M4 4h10v24H4zM18 4h10v24H18zM8 11h16M8 20h16" /></svg
-        ><span>Đối chiếu<small>Invoice Reconciliation</small></span></a
-      >
-      <div class="nav-label">Không gian làm việc</div>
-      <nav aria-label="Điều hướng chính">
-        <a class="nav-item active" href="#workspace" aria-current="page"
-          ><svg class="icon"><use href="#i-compare" /></svg>Đối chiếu chứng
-          từ</a
-        ><a
-          class="nav-item"
-          href="#history-section"
-          aria-label="Lịch sử đối chiếu"
-          ><svg class="icon"><use href="#i-history" /></svg
-          ><span class="nav-text">Lịch sử đối chiếu</span></a
-        ><button class="nav-item" data-help aria-label="Cách sử dụng">
-          <svg class="icon"><use href="#i-help" /></svg
-          ><span class="nav-text">Cách sử dụng</span>
-        </button>
-      </nav>
-      <div class="sidebar-bottom">
-        <div class="legend">
-          <p>Đọc kết quả</p>
-          <span><i class="legend-dot match"></i>Khớp dữ liệu</span
-          ><span><i class="legend-dot difference"></i>Có chênh lệch</span
-          ><span><i class="legend-dot review"></i>Cần kiểm tra thêm</span>
-        </div>
-        <div class="connections">
-          <span id="sql-status">Đang kiểm tra kết nối…</span
-          ><span id="ai-status">AI chưa cấu hình</span>
-        </div>
-        <span class="local-label">Bản chạy trên máy · v0.1</span>
+    <header class="app-header">
+      <div class="header-inner">
+        <a class="brand" href="#workspace" aria-label="Đối chiếu — trang làm việc">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 4h10v24H4zM18 4h10v24H18zM8 11h16M8 20h16" /></svg>
+          <span>Đối chiếu<small>Invoice Reconciliation</small></span>
+        </a>
+        <nav class="view-nav" aria-label="Điều hướng chính">
+          <a href="#workspace" data-view="workspace" aria-current="page">Chứng từ</a>
+          <a href="#history-section" data-view="history">Lịch sử</a>
+        </nav>
+        <button class="text-button help-trigger" data-help><svg class="icon" aria-hidden="true"><use href="#i-help" /></svg><span>Hướng dẫn</span></button>
       </div>
-    </aside>
-    <header class="topbar">
-      <span
-        >Chứng từ <span class="breadcrumb-divider">/</span>
-        <strong>Đối chiếu</strong></span
-      ><button class="text-button" data-help>
-        <svg class="icon"><use href="#i-help" /></svg>Hướng dẫn
-      </button>
     </header>
     <main id="workspace" tabindex="-1">
+      <div id="review-workspace">
       <div class="title-row">
         <div>
           <h1>Đối chiếu chứng từ</h1>
           <p class="muted">
-            Từ đơn đặt hàng đến hóa đơn. Kiểm tra rõ từng khoản chênh lệch.
+            Kiểm tra hóa đơn với đơn đặt hàng, rõ từng khoản chênh lệch.
           </p>
         </div>
-        <button id="demo" class="secondary">
-          <svg class="icon"><use href="#i-doc" /></svg>Thử với bộ mẫu<svg
+        <button id="demo" class="primary">
+          <svg class="icon" aria-hidden="true"><use href="#i-doc" /></svg>Thử với bộ mẫu<svg
             class="icon"
           >
             <use href="#i-arrow" />
@@ -116,7 +87,7 @@
       </div>
       <ol class="workflow" aria-label="Tiến trình đối chiếu">
         <li id="step-upload" class="current" aria-current="step">
-          <span class="step-number">1</span
+          <span class="step-number"><svg class="icon" aria-hidden="true"><use href="#i-upload" /></svg></span
           ><span
             >Thêm chứng từ<small id="upload-progress"
               >Chọn một PO và một hóa đơn</small
@@ -124,11 +95,11 @@
           >
         </li>
         <li id="step-review">
-          <span class="step-number">2</span
+          <span class="step-number"><svg class="icon" aria-hidden="true"><use href="#i-doc" /></svg></span
           ><span>Kiểm tra dữ liệu<small>Đối chiếu với bản gốc</small></span>
         </li>
         <li id="step-result">
-          <span class="step-number">3</span
+          <span class="step-number"><svg class="icon" aria-hidden="true"><use href="#i-check" /></svg></span
           ><span>Xem kết quả<small>Chênh lệch và lịch sử</small></span>
         </li>
       </ol>
@@ -139,10 +110,11 @@
         aria-live="polite"
         hidden
       ></div>
+      <div class="intake-grid">
       <details class="upload-section" id="upload-details" open>
         <summary>
           <span class="summary-title"
-            ><svg class="icon"><use href="#i-doc" /></svg>Chứng từ đầu vào
+            ><svg class="icon" aria-hidden="true"><use href="#i-doc" /></svg>Chứng từ đầu vào
             <span id="file-count" class="count">0/2</span></span
           ><span class="summary-action"
             ><span class="summary-label">Thêm / thay tài liệu</span>
@@ -157,7 +129,7 @@
                 Bộ mẫu là dữ liệu giả lập, không cần API.
               </p>
             </div>
-            <select id="method">
+            <select id="method" aria-describedby="method-note">
               <option value="template">Bố cục mẫu · trên máy</option>
               <option value="ai" id="ai-option" disabled>
                 AI · chưa cấu hình API
@@ -166,14 +138,14 @@
           </div>
           <div class="upload-pair">
             <div class="dropzone" data-drop="po">
-              <svg class="document-icon"><use href="#i-doc" /></svg>
+              <svg class="document-icon" aria-hidden="true"><use href="#i-doc" /></svg>
               <div class="drop-copy">
                 <h2>Đơn đặt hàng <span>PO</span></h2>
                 <p id="po-file-name">Kéo thả tài liệu vào đây</p>
                 <small>PDF, PNG, JPG · tối đa 10 MB</small>
               </div>
               <label class="file-button" for="po-file"
-                ><svg class="icon"><use href="#i-upload" /></svg>Chọn
+                ><svg class="icon" aria-hidden="true"><use href="#i-upload" /></svg>Chọn
                 file</label
               ><input
                 class="file-input"
@@ -184,14 +156,14 @@
               />
             </div>
             <div class="dropzone" data-drop="invoice">
-              <svg class="document-icon"><use href="#i-doc" /></svg>
+              <svg class="document-icon" aria-hidden="true"><use href="#i-doc" /></svg>
               <div class="drop-copy">
                 <h2>Hóa đơn <span>Invoice</span></h2>
                 <p id="invoice-file-name">Kéo thả tài liệu vào đây</p>
                 <small>Cùng đơn đặt hàng và tiền tệ</small>
               </div>
               <label class="file-button" for="invoice-file"
-                ><svg class="icon"><use href="#i-upload" /></svg>Chọn
+                ><svg class="icon" aria-hidden="true"><use href="#i-upload" /></svg>Chọn
                 file</label
               ><input
                 class="file-input"
@@ -209,7 +181,11 @@
         </div>
       </details>
       <section class="first-run" id="first-run" aria-label="Nội dung đối chiếu">
-        <h2>Ba điểm cần kiểm tra</h2>
+        <h2>Một bộ mẫu để bắt đầu</h2>
+        <a class="sample-preview" href="/api/samples/invoice.pdf" target="_blank" rel="noopener" aria-label="Mở hóa đơn mẫu PDF, tab mới">
+          <img src="/static/sample-invoice.png" width="640" height="906" alt="Hóa đơn mẫu INV-001 với ba mặt hàng giấy A4, bút xanh và bìa hồ sơ" />
+          <span>INV-001 <span>Dữ liệu giả lập <svg class="icon" aria-hidden="true"><use href="#i-external" /></svg></span></span>
+        </a>
         <div class="check-guide">
           <div>
             <strong>Số lượng & đơn vị</strong>
@@ -230,6 +206,7 @@
           >Tải hóa đơn mẫu ↓</a
         >
       </section>
+      </div>
       <section id="document-section" hidden aria-label="Kiểm tra dữ liệu">
         <div class="section-heading">
           <div>
@@ -257,9 +234,9 @@
           </p>
         </div>
         <button class="primary" id="compare" disabled>
-          <svg class="icon"><use href="#i-compare" /></svg
+          <svg class="icon" aria-hidden="true"><use href="#i-compare" /></svg
           ><span>Đối chiếu & lưu</span
-          ><svg class="icon"><use href="#i-arrow" /></svg>
+          ><svg class="icon" aria-hidden="true"><use href="#i-arrow" /></svg>
         </button>
       </div>
       <section
@@ -269,21 +246,24 @@
         tabindex="-1"
         hidden
       ></section>
-      <section class="history-section" id="history-section">
+      </div>
+      <section class="history-section" id="history-section" hidden tabindex="-1">
+        <h1>Lịch sử đối chiếu</h1>
         <div class="section-heading">
           <div>
             <h2>
-              Lịch sử đối chiếu <span id="history-count" class="count"></span>
+              Các lần đã lưu <span id="history-count" class="count"></span>
             </h2>
             <p class="hint">Mở lại dữ liệu và kết quả ở thời điểm đã lưu.</p>
           </div>
           <button id="refresh" class="secondary">
-            <svg class="icon"><use href="#i-refresh" /></svg>Tải lại
+            <svg class="icon" aria-hidden="true"><use href="#i-refresh" /></svg>Tải lại
           </button>
         </div>
         <div id="history" class="muted">Đang đọc lịch sử…</div>
       </section>
       <footer>
+        <div class="connections" aria-label="Trạng thái dịch vụ"><span id="sql-status">Đang kiểm tra kết nối…</span><span id="ai-status">AI chưa cấu hình</span></div>
         <span>Một PO · Một hóa đơn · Trước thuế và chiết khấu</span
         ><span>Kết quả hỗ trợ kiểm tra, chưa phải quyết định thanh toán.</span>
       </footer>
@@ -300,7 +280,7 @@
             class="icon-button"
             aria-label="Đóng chứng từ"
           >
-            <svg class="icon"><use href="#i-close" /></svg>
+            <svg class="icon" aria-hidden="true"><use href="#i-close" /></svg>
           </button>
         </div>
         <div class="page-nav">
@@ -309,17 +289,21 @@
           ><button id="next-page" class="secondary">Trang sau →</button>
         </div>
       </div>
-      <div class="paper">
+      <div class="evidence-layout"><div class="evidence-preview"><div class="paper">
         <img id="source-image" alt="Trang chứng từ gốc" />
         <div id="highlights"></div>
       </div>
-      <p id="source-quote" class="source-quote"></p>
+      </div><aside class="evidence-context">
+        <h3>Dữ liệu đang kiểm tra</h3><div id="source-fields"></div>
+        <h3>Câu trích trên chứng từ</h3><p id="source-quote" class="source-quote"></p>
+        <p class="hint">Đối chiếu từng giá trị với bản gốc trước khi xác nhận.</p>
+      </aside></div>
     </dialog>
     <dialog id="help-dialog" aria-labelledby="help-title">
       <div class="dialog-heading">
         <h2 id="help-title">Bắt đầu với một cặp chứng từ</h2>
         <button id="close-help" class="icon-button" aria-label="Đóng hướng dẫn">
-          <svg class="icon"><use href="#i-close" /></svg>
+          <svg class="icon" aria-hidden="true"><use href="#i-close" /></svg>
         </button>
       </div>
       <ol class="help-steps">

@@ -35,7 +35,35 @@ const capture = (entry) => ({
 const discard = () =>
   !state.dirty ||
   confirm("Thay chứng từ đang mở? Các chỉnh sửa chưa lưu sẽ được thay thế.");
+const motions = new WeakMap();
+function feedback(element, distance = 6) {
+  motions.get(element)?.cancel();
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  motions.set(element, element.animate(
+    [{ opacity: .55, transform: `translateY(${distance}px)` }, { opacity: 1, transform: "none" }],
+    { duration: 220, easing: "cubic-bezier(.2,.7,.3,1)" },
+  ));
+}
+function switchView(focus = false) {
+  const history = location.hash === "#history-section";
+  $("review-workspace").hidden = history;
+  $("history-section").hidden = !history;
+  document.querySelectorAll("[data-view]").forEach((link) => {
+    const active = (link.dataset.view === "history") === history;
+    if (active) link.setAttribute("aria-current", "page");
+    else link.removeAttribute("aria-current");
+  });
+  if (focus) {
+    const target = history ? $("history-section") : $("workspace");
+    target.focus({ preventScroll: true });
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }
+}
 function goToResults() {
+  if (location.hash === "#history-section") {
+    history.replaceState(null, "", "#workspace");
+    switchView();
+  }
   $("results").focus({ preventScroll: true });
   $("results").scrollIntoView({
     behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
@@ -79,6 +107,8 @@ function updateControls() {
   $("document-section").hidden = count === 0;
   $("review-bar").hidden = count === 0;
   $("first-run").hidden = count > 0;
+  document.querySelector(".intake-grid").classList.toggle("has-documents", count > 0);
+  $("demo").className = count ? "secondary" : "primary";
   $("file-count").textContent = `${count}/2`;
   $("upload-progress").textContent = `${count}/2 chứng từ đã thêm`;
   $("review-hint").textContent =
@@ -281,6 +311,7 @@ $("demo").onclick = () =>
     editor("po");
     editor("invoice");
     $("upload-details").open = false;
+    feedback($("document-section"));
   }, "Đang mở bộ chứng từ mẫu…");
 async function uploadFile(side, file) {
   if (!file || state.busy) return;
@@ -298,6 +329,7 @@ async function uploadFile(side, file) {
       );
       invalidate();
       editor(side);
+      feedback($(side + "-panel"));
       if (state.po && state.invoice) $("upload-details").open = false;
     },
     $("method").value === "ai"
@@ -390,6 +422,7 @@ function renderResults() {
         (button.onclick = () => {
           state.filter = button.dataset.filter;
           filterResults();
+          feedback($("results").querySelector(".table-wrap"), 3);
         }),
     );
   filterResults();
@@ -422,12 +455,17 @@ function showSource(side, line = null) {
   state.source = { side, line };
   state.page = line?.page || 1;
   $("evidence-title").textContent = state[side].filename;
+  const fields = line
+    ? [["Mặt hàng", line.sku || "Chưa có SKU"], ["Mô tả", line.description || "—"], ["Số lượng", `${format(line.quantity)} ${line.unit || ""}`], ["Đơn giá", format(line.unit_price, state[side].document.currency)], ["Thành tiền đã đọc", format(line.stated_total, state[side].document.currency)]]
+    : [["Chứng từ", state[side].document.number || "—"], ["Nhà cung cấp", state[side].document.supplier || "—"], ["Số trang", state[side].pages]];
+  $("source-fields").innerHTML = `<dl class="source-values">${fields.map(([label, value]) => `<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join("")}</dl>`;
   drawPage();
   $("evidence-dialog").showModal();
 }
 function drawPage() {
   const { side, line } = state.source,
     entry = state[side];
+  document.querySelector(".paper").classList.add("is-loading");
   $("source-image").src = `/api/documents/${entry.id}/page/${state.page}`;
   $("page-label").textContent = `Trang ${state.page} / ${entry.pages}`;
   $("prev-page").disabled = state.page <= 1;
@@ -447,7 +485,7 @@ function drawPage() {
       ? "Vùng trích xuất ban đầu. Hãy đối chiếu các giá trị bạn đã sửa với bản gốc."
       : "Chưa xác minh được vị trí câu trích. Kiểm tra trực tiếp trang tài liệu."
     : "Bản tài liệu gốc được tải lên.";
-  $("source-quote").textContent = line?.quote || "";
+  $("source-quote").textContent = line?.quote || "Mở nguồn từ một dòng hàng để xem câu trích tương ứng.";
 }
 $("close-evidence").onclick = () => $("evidence-dialog").close();
 $("prev-page").onclick = () => {
@@ -459,9 +497,11 @@ $("next-page").onclick = () => {
   drawPage();
 };
 $("source-image").onerror = () => {
+  document.querySelector(".paper").classList.remove("is-loading");
   $("evidence-note").textContent =
     "Không tải được trang tài liệu. Thử mở lại bản gốc.";
 };
+$("source-image").onload = () => document.querySelector(".paper").classList.remove("is-loading");
 async function loadHistory() {
   try {
     state.runs = await api("/api/runs");
@@ -478,7 +518,7 @@ function renderHistory() {
   $("history-count").textContent =
     runs.length === 30 ? "30 gần nhất" : String(runs.length);
   $("history").innerHTML = runs.length
-    ? `<div class="history-list">${visible.map((run) => `<button class="history-item" data-run="${esc(run.id)}"><span><strong>${format(run.delta, run.currency)}</strong><span class="history-date">${new Date(run.created_at).toLocaleString("vi-VN", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })} · ${run.complete ? "Đã đối chiếu" : "Cần xem lại"}</span></span>${icon("arrow")}</button>`).join("")}</div>${runs.length > 6 ? `<button class="history-more" id="history-more">${state.historyExpanded ? "Thu gọn" : `Xem thêm ${runs.length - 6} lần đối chiếu`}</button>` : ""}`
+    ? `<div class="history-list">${visible.map((run) => `<button class="history-item" data-run="${esc(run.id)}"><span><strong>Đối chiếu ${esc(run.id.slice(0, 8))}</strong><span class="history-date">${new Date(run.created_at).toLocaleString("vi-VN", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })} · ${run.complete ? "Đã đối chiếu" : "Cần xem lại"}</span></span><span class="history-amount">${format(run.delta, run.currency)}<small>Chênh lệch hóa đơn − PO</small></span>${icon("arrow")}</button>`).join("")}</div>${runs.length > 6 ? `<button class="history-more" id="history-more">${state.historyExpanded ? "Thu gọn" : `Xem thêm ${runs.length - 6} lần đối chiếu`}</button>` : ""}`
     : '<p class="history-empty">Chưa có kết quả đã lưu. Thêm một cặp chứng từ để bắt đầu.</p>';
   if ($("history-more"))
     $("history-more").onclick = () => {
@@ -519,16 +559,8 @@ document
   .forEach((button) => (button.onclick = () => $("help-dialog").showModal()));
 $("close-help").onclick = $("help-done").onclick = () =>
   $("help-dialog").close();
-document.querySelectorAll(".sidebar a.nav-item").forEach(
-  (link) =>
-    (link.onclick = () => {
-      document.querySelectorAll(".sidebar a.nav-item").forEach((item) => {
-        item.classList.toggle("active", item === link);
-        if (item === link) item.setAttribute("aria-current", "page");
-        else item.removeAttribute("aria-current");
-      });
-    }),
-);
+window.addEventListener("hashchange", () => switchView(true));
+switchView();
 window.addEventListener("beforeunload", (event) => {
   if (state.dirty) {
     event.preventDefault();

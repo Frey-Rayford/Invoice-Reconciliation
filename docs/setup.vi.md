@@ -25,7 +25,7 @@ Mở http://127.0.0.1:8315. Nếu đã có `.env`, giữ cấu hình đang dùng
 1. Bấm **Thử với bộ mẫu**, hoặc kéo thả từng file vào ô chứng từ tương ứng.
 2. Bấm biểu tượng trang trong cột **Nguồn** để xem dòng tương ứng trên PDF. Có thể sửa các ô nhập ngay trong bảng; ô đã sửa có viền màu và giữ giá trị ban đầu trong tooltip.
 3. Xác nhận đã kiểm tra, rồi bấm **Đối chiếu & lưu**.
-4. Bấm một lần đối chiếu trong lịch sử để mở lại dữ liệu lúc đó.
+4. Mở tab **Lịch sử**, bấm một lần đối chiếu để xem lại dữ liệu lúc đó. Chuyển giữa hai tab vẫn giữ các ô đang sửa; mở một kết quả khác sẽ hỏi trước khi thay dữ liệu chưa lưu.
 
 Mẫu chưa sửa có tổng PO **3.250.000 VND**, tổng hóa đơn **3.720.000 VND**. Chênh lệch **470.000 VND** gồm 300.000 do giá giấy, 50.000 do số lượng bút và 120.000 từ mặt hàng chỉ có trên hóa đơn. Đây là kết quả của dữ liệu mẫu, không phải số tiền tiết kiệm thực tế.
 
